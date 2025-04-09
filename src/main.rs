@@ -4,7 +4,6 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
 struct Task {
-    id: u8,
     description: String,
     status: TaskStatus,
     created_at: DateTime<Local>,
@@ -48,6 +47,8 @@ enum Commands {
 
 fn main() {
     let cli = Cli::parse();
+
+    let mut tasks: Vec<Task> = Vec::new();
 
     match &cli.command {
         Commands::Add { description } => todo!(),
