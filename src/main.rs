@@ -1,3 +1,8 @@
+use std::{
+    fs::{self, File},
+    io::BufWriter,
+};
+
 use chrono::{DateTime, Local};
 use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
@@ -67,24 +72,48 @@ fn add_task(description: String, tasks: &mut Vec<Task>) {
 
 fn update_task(id: &usize, description: String, tasks: &mut Vec<Task>) {
     // todo: is panicking here bad?
-    let task = tasks.get_mut(*id).expect("task not found");
+    let task = tasks.get_mut(*id - 1).expect("task not found");
     task.description = description;
 }
 
 fn delete_task(id: &usize, tasks: &mut Vec<Task>) {
-    tasks.remove(*id);
+    if 0 < *id && *id < tasks.len() + 1 {
+        tasks.remove(*id - 1);
+    } else {
+        let min_val = if tasks.len() != 0 { 1 } else { 0 };
+        println!(
+            "invalid task selected. the available range is currently [{}, {}]",
+            min_val,
+            tasks.len()
+        );
+    }
 }
 
 fn mark_task(id: &usize, status: TaskStatus, tasks: &mut Vec<Task>) {
     // todo: is panicking here bad?
-    let task: &mut Task = tasks.get_mut(*id).expect("task not found");
+    let task: &mut Task = tasks.get_mut(*id - 1).expect("task not found");
     task.status = status;
 }
+
+fn read_tasks() -> Result<Vec<Task>, Box<dyn std::error::Error>> {
+    let s = fs::read_to_string(PATH)?;
+    let tasks = serde_json::from_str(&s)?;
+    Ok(tasks)
+}
+
+fn write_tasks(tasks: Vec<Task>) -> Result<(), Box<dyn std::error::Error>> {
+    let file = File::create(PATH)?;
+    let writer = BufWriter::new(file);
+    serde_json::to_writer_pretty(writer, &tasks)?;
+    Ok(())
+}
+
+const PATH: &str = "tasks.json";
 
 fn main() {
     let cli = Cli::parse();
 
-    let mut tasks: Vec<Task> = Vec::new();
+    let mut tasks = read_tasks().unwrap_or_else(|_| Vec::new());
 
     match &cli.command {
         Commands::Add { description } => add_task(description.to_string(), &mut tasks),
@@ -103,4 +132,6 @@ fn main() {
             None => print_tasks(&mut tasks, None),
         },
     }
+
+    write_tasks(tasks).expect("failed to write");
 }
