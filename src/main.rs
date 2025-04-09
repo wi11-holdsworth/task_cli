@@ -63,6 +63,10 @@ fn update_task(id: &usize, description: String, tasks: &mut Vec<Task>) {
     task.description = description;
 }
 
+fn delete_task(id: &usize, tasks: &mut Vec<Task>) {
+    tasks.remove(*id);
+}
+
 fn main() {
     let cli = Cli::parse();
 
@@ -73,7 +77,7 @@ fn main() {
         Commands::Update { id, description } => {
             update_task(id, description.to_string(), &mut tasks)
         }
-        Commands::Delete { id } => todo!(),
+        Commands::Delete { id } => delete_task(id, &mut tasks),
         Commands::MarkInProgress { id } => todo!(),
         Commands::MarkDone { id } => todo!(),
         Commands::List { status } => match &status {
