@@ -1,5 +1,3 @@
-use std::ops::Index;
-
 use chrono::{DateTime, Local};
 use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
@@ -12,7 +10,7 @@ struct Task {
     updated_at: DateTime<Local>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Subcommand)]
+#[derive(Debug, Deserialize, Serialize, Subcommand, PartialEq, Eq, Clone, Copy)]
 enum TaskStatus {
     /// Show unstarted tasks
     Todo,
@@ -45,6 +43,16 @@ enum Commands {
         #[command(subcommand)]
         status: Option<TaskStatus>,
     },
+}
+
+fn print_tasks(tasks: &mut Vec<Task>, status: Option<TaskStatus>) {
+    for task in tasks {
+        // todo: pretty print tasks
+        match status {
+            Some(status) => if task.status == status {},
+            None => println!("{:?}", task),
+        }
+    }
 }
 
 fn add_task(description: String, tasks: &mut Vec<Task>) {
@@ -88,11 +96,11 @@ fn main() {
         Commands::MarkDone { id } => mark_task(id, TaskStatus::InProgress, &mut tasks),
         Commands::List { status } => match &status {
             Some(status) => match status {
-                TaskStatus::Todo => todo!(),
-                TaskStatus::InProgress => todo!(),
-                TaskStatus::Done => todo!(),
+                TaskStatus::Todo => print_tasks(&mut tasks, Some(TaskStatus::Todo)),
+                TaskStatus::InProgress => print_tasks(&mut tasks, Some(TaskStatus::InProgress)),
+                TaskStatus::Done => print_tasks(&mut tasks, Some(TaskStatus::Done)),
             },
-            None => todo!(),
+            None => print_tasks(&mut tasks, None),
         },
     }
 }
