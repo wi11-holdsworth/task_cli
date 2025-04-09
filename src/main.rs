@@ -45,13 +45,23 @@ enum Commands {
     },
 }
 
+fn add_task(description: String, tasks: &mut Vec<Task>) {
+    let task = Task {
+        description,
+        status: TaskStatus::Todo,
+        created_at: Local::now(),
+        updated_at: Local::now(),
+    };
+    tasks.push(task);
+}
+
 fn main() {
     let cli = Cli::parse();
 
     let mut tasks: Vec<Task> = Vec::new();
 
     match &cli.command {
-        Commands::Add { description } => todo!(),
+        Commands::Add { description } => add_task(description.to_string(), &mut tasks),
         Commands::Update { id, description } => todo!(),
         Commands::Delete { id } => todo!(),
         Commands::MarkInProgress { id } => todo!(),
