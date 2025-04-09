@@ -67,6 +67,12 @@ fn delete_task(id: &usize, tasks: &mut Vec<Task>) {
     tasks.remove(*id);
 }
 
+fn mark_task(id: &usize, status: TaskStatus, tasks: &mut Vec<Task>) {
+    // todo: is panicking here bad?
+    let task: &mut Task = tasks.get_mut(*id).expect("task not found");
+    task.status = status;
+}
+
 fn main() {
     let cli = Cli::parse();
 
@@ -78,8 +84,8 @@ fn main() {
             update_task(id, description.to_string(), &mut tasks)
         }
         Commands::Delete { id } => delete_task(id, &mut tasks),
-        Commands::MarkInProgress { id } => todo!(),
-        Commands::MarkDone { id } => todo!(),
+        Commands::MarkInProgress { id } => mark_task(id, TaskStatus::InProgress, &mut tasks),
+        Commands::MarkDone { id } => mark_task(id, TaskStatus::InProgress, &mut tasks),
         Commands::List { status } => match &status {
             Some(status) => match status {
                 TaskStatus::Todo => todo!(),
