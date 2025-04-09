@@ -1,3 +1,5 @@
+use std::ops::Index;
+
 use chrono::{DateTime, Local};
 use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
@@ -31,13 +33,13 @@ enum Commands {
     /// Add a new task
     Add { description: String },
     /// Udpate a task's description
-    Update { id: u8, description: String },
+    Update { id: usize, description: String },
     /// Delete a task
-    Delete { id: u8 },
+    Delete { id: usize },
     /// Mark a task as in progress
-    MarkInProgress { id: u8 },
+    MarkInProgress { id: usize },
     /// Mark a task as done
-    MarkDone { id: u8 },
+    MarkDone { id: usize },
     /// List all tasks
     List {
         #[command(subcommand)]
@@ -55,6 +57,12 @@ fn add_task(description: String, tasks: &mut Vec<Task>) {
     tasks.push(task);
 }
 
+fn update_task(id: &usize, description: String, tasks: &mut Vec<Task>) {
+    // todo: is panicking here bad?
+    let task = tasks.get_mut(*id).expect("task not found");
+    task.description = description;
+}
+
 fn main() {
     let cli = Cli::parse();
 
@@ -62,7 +70,9 @@ fn main() {
 
     match &cli.command {
         Commands::Add { description } => add_task(description.to_string(), &mut tasks),
-        Commands::Update { id, description } => todo!(),
+        Commands::Update { id, description } => {
+            update_task(id, description.to_string(), &mut tasks)
+        }
         Commands::Delete { id } => todo!(),
         Commands::MarkInProgress { id } => todo!(),
         Commands::MarkDone { id } => todo!(),
