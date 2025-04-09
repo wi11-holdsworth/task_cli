@@ -126,7 +126,7 @@ fn main() {
         }
         Commands::Delete { id } => delete_task(id, &mut tasks),
         Commands::MarkInProgress { id } => mark_task(id, TaskStatus::InProgress, &mut tasks),
-        Commands::MarkDone { id } => mark_task(id, TaskStatus::InProgress, &mut tasks),
+        Commands::MarkDone { id } => mark_task(id, TaskStatus::Done, &mut tasks),
         Commands::List { status } => match &status {
             Some(status) => match status {
                 TaskStatus::Todo => print_tasks(&mut tasks, Some(TaskStatus::Todo)),
