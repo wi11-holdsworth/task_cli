@@ -8,3 +8,4 @@
 - [ ] remove debug print statements
 - [ ] resolve remaining todos
 - [ ] write readme!
+- [ ] build and release v1.0 
