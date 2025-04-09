@@ -54,7 +54,11 @@ fn print_tasks(tasks: &mut Vec<Task>, status: Option<TaskStatus>) {
     for task in tasks {
         // todo: pretty print tasks
         match status {
-            Some(status) => if task.status == status {},
+            Some(status) => {
+                if task.status == status {
+                    println!("{:?}", task)
+                }
+            }
             None => println!("{:?}", task),
         }
     }
