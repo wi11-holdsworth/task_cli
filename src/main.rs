@@ -24,7 +24,7 @@ enum TaskStatus {
 #[derive(Parser, Debug)]
 struct Cli {
     #[command(subcommand)]
-    command: Option<Commands>,
+    command: Commands,
 }
 
 #[derive(Debug, Subcommand)]
@@ -47,5 +47,21 @@ enum Commands {
 }
 
 fn main() {
-    let _cli = Cli::parse();
+    let cli = Cli::parse();
+
+    match &cli.command {
+        Commands::Add { description } => todo!(),
+        Commands::Update { id, description } => todo!(),
+        Commands::Delete { id } => todo!(),
+        Commands::MarkInProgress { id } => todo!(),
+        Commands::MarkDone { id } => todo!(),
+        Commands::List { status } => match &status {
+            Some(status) => match status {
+                TaskStatus::Todo => todo!(),
+                TaskStatus::InProgress => todo!(),
+                TaskStatus::Done => todo!(),
+            },
+            None => todo!(),
+        },
+    }
 }
