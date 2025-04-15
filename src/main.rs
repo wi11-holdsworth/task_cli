@@ -50,6 +50,23 @@ enum Commands {
     },
 }
 
+fn offset_index(id: &usize) -> usize {
+    id - 1
+}
+
+fn index_in_range(id: &usize, tasks: &mut Vec<Task>) -> bool {
+    0 < *id && *id < tasks.len() + 1
+}
+
+fn get_task<'a>(id: &usize, tasks: &'a mut Vec<Task>) -> Option<&'a mut Task> {
+    if index_in_range(id, tasks) {
+        tasks.get_mut(offset_index(id))
+    } else {
+        println!("Task index {} is out of bounds.", id);
+        None
+    }
+}
+
 fn print_tasks(status: Option<TaskStatus>, tasks: &mut Vec<Task>) {
     for task in tasks {
         // todo: pretty print tasks
@@ -75,28 +92,23 @@ fn add_task(description: String, tasks: &mut Vec<Task>) {
 }
 
 fn update_task(id: &usize, description: String, tasks: &mut Vec<Task>) {
-    // todo: is panicking here bad?
-    let task = tasks.get_mut(*id - 1).expect("task not found");
-    task.description = description;
+    if let Some(task) = get_task(id, tasks) {
+        task.description = description;
+    };
 }
 
 fn delete_task(id: &usize, tasks: &mut Vec<Task>) {
-    if 0 < *id && *id < tasks.len() + 1 {
-        tasks.remove(*id - 1);
+    if index_in_range(id, tasks) {
+        tasks.remove(offset_index(id));
     } else {
-        let min_val = if tasks.len() != 0 { 1 } else { 0 };
-        println!(
-            "invalid task selected. the available range is currently [{}, {}]",
-            min_val,
-            tasks.len()
-        );
+        println!("Task index {} is out of bounds.", id);
     }
 }
 
 fn mark_task(id: &usize, status: TaskStatus, tasks: &mut Vec<Task>) {
-    // todo: is panicking here bad?
-    let task: &mut Task = tasks.get_mut(*id - 1).expect("task not found");
-    task.status = status;
+    if let Some(task) = get_task(id, tasks) {
+        task.status = status;
+    };
 }
 
 fn read_tasks() -> Result<Vec<Task>, Box<dyn std::error::Error>> {
