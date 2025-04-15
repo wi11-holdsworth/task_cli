@@ -50,7 +50,7 @@ enum Commands {
     },
 }
 
-fn print_tasks(tasks: &mut Vec<Task>, status: Option<TaskStatus>) {
+fn print_tasks(status: Option<TaskStatus>, tasks: &mut Vec<Task>) {
     for task in tasks {
         // todo: pretty print tasks
         match status {
@@ -129,11 +129,11 @@ fn main() {
         Commands::MarkDone { id } => mark_task(id, TaskStatus::Done, &mut tasks),
         Commands::List { status } => match &status {
             Some(status) => match status {
-                TaskStatus::Todo => print_tasks(&mut tasks, Some(TaskStatus::Todo)),
-                TaskStatus::InProgress => print_tasks(&mut tasks, Some(TaskStatus::InProgress)),
-                TaskStatus::Done => print_tasks(&mut tasks, Some(TaskStatus::Done)),
+                TaskStatus::Todo => print_tasks(Some(TaskStatus::Todo), &mut tasks),
+                TaskStatus::InProgress => print_tasks(Some(TaskStatus::InProgress), &mut tasks),
+                TaskStatus::Done => print_tasks(Some(TaskStatus::Done), &mut tasks),
             },
-            None => print_tasks(&mut tasks, None),
+            None => print_tasks(None, &mut tasks),
         },
     }
 
